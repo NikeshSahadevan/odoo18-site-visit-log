@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_site_visit_list" model="ir.ui.view">
+        <field name="name">site.visit.list</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <list string="Site Visits">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="visit_date"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_site_visit_kanban" model="ir.ui.view">
+        <field name="name">site.visit.kanban</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="visit_date"/>
+                <field name="user_id"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong><field name="reference"/></strong>
+                                <span class="badge text-bg-secondary"><field name="visit_date"/></span>
+                            </div>
+                            <div class="fw-bold mb-1">
+                                <field name="name"/>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <field name="partner_id"/>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <field name="state" widget="label_selection" options="{'classes': {'draft': 'info', 'done': 'success'}}"/>
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_site_visit_calendar" model="ir.ui.view">
+        <field name="name">site.visit.calendar</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Site Visits Schedule" date_start="visit_date" color="user_id" mode="month">
+                <field name="reference"/>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="state" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_site_visit_form" model="ir.ui.view">
+        <field name="name">site.visit.form</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <form string="Site Visit">
+                <header>
+                    <button name="action_done"
+                            string="Mark as Done"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="customer_phone"/>
+                        </group>
+                        <group>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="visit_date"/>
+                            <field name="visit_summary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_site_visit_search" model="ir.ui.view">
+        <field name="name">site.visit.search</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <search string="Search Site Visits">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter string="My Visits" name="filter_my_visits" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Done" name="filter_done" domain="[('state', '=', 'done')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Salesperson" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Visit Date" name="group_by_date" context="{'group_by': 'visit_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_site_visit" model="ir.actions.act_window">
+        <field name="name">Site Visits</field>
+        <field name="res_model">site.visit</field>
+        <field name="view_mode">list,kanban,calendar,form</field>
+    </record>
+
+    <!-- Root Menu (App Switcher Icon) -->
+    <menuitem id="menu_site_visit_root"
+              name="Site Visits"
+              sequence="10"/>
+
+    <!-- Sub Menu (Opens the Action) -->
+    <menuitem id="menu_site_visit_logs"
+              name="Visit Logs"
+              parent="menu_site_visit_root"
+              action="action_site_visit"
+              sequence="10"/>
+</odoo>

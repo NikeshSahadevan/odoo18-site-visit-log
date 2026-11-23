@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Report Action (Adds Print menu to Site Visit Form) -->
+    <record id="action_report_site_visit" model="ir.actions.report">
+        <field name="name">Site Visit Report</field>
+        <field name="model">site.visit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">site_visit_log.report_site_visit_document</field>
+        <field name="report_file">site_visit_log.report_site_visit_document</field>
+        <field name="print_report_name">'Site Visit - %s' % (object.reference)</field>
+        <field name="binding_model_id" ref="model_site_visit"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 2. QWeb PDF Template -->
+    <template id="report_site_visit_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="mt-4">
+                            Site Visit Report: <span t-field="o.reference"/>
+                        </h2>
+
+                        <div class="row mt-4 mb-4">
+                            <div class="col-6">
+                                <strong>Customer:</strong>
+                                <p t-field="o.partner_id"/>
+                                <strong>Phone:</strong>
+                                <p t-field="o.customer_phone"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Visit Date:</strong>
+                                <p t-field="o.visit_date"/>
+                                <strong>Status:</strong>
+                                <p t-field="o.state"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Visit Purpose</th>
+                                    <th>Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span t-field="o.name"/></td>
+                                    <td><span t-field="o.visit_summary"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="mt-4" t-if="o.notes">
+                            <strong>Field Notes:</strong>
+                            <p t-field="o.notes"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_site_visit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.site.visit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_site_visits"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-map-marker"
+                        invisible="site_visit_count == 0">
+                    <field name="site_visit_count" widget="statinfo" string="Site Visits"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>
